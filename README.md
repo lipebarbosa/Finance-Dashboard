@@ -1,38 +1,66 @@
 # Finance Dashboard
 
-Aplicação full-stack para gerenciamento de ativos financeiros, com autenticação segura, atualização automática de preços e métricas de portfólio por usuário.
+Aplicação full-stack para gerenciamento de portfólios financeiros desenvolvida com **Spring Boot** e **React**. O sistema permite que usuários autenticados gerenciem seus próprios ativos, acompanhem métricas de investimento e visualizem a evolução do portfólio através de uma arquitetura moderna baseada em APIs REST.
 
-[![CI](https://github.com/FelipedBarbosa/Finance-Dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/FelipedBarbosa/Finance-Dashboard/actions/workflows/ci.yml)
+## Sobre o projeto
 
-**Demo Online:** https://finance-dashboard-phi.vercel.app *(atualizar após deploy)*
+O Finance Dashboard foi desenvolvido como um projeto de estudo avançado para aplicar conceitos utilizados em aplicações corporativas modernas.
 
----
+Entre os principais objetivos estão:
 
-## Estrutura do Repositório
+- arquitetura em camadas;
+- autenticação e autorização utilizando JWT;
+- isolamento de dados por usuário;
+- integração com APIs externas;
+- migrações versionadas de banco de dados;
+- atualização automática de informações financeiras;
+- integração contínua com GitHub Actions;
+- containerização utilizando Docker.
 
-```
-finance-dashboard/
-├── backend/          # Spring Boot 3 · Java 17 · PostgreSQL
-├── frontend/         # React 19 · TanStack Router · Vite · Tailwind CSS
-├── docker-compose.yml
-├── README.md
-└── .github/
-    └── workflows/
-        └── ci.yml
-```
+O projeto segue uma estrutura full-stack, separando frontend e backend em módulos independentes.
 
 ---
 
 ## Funcionalidades
 
-* Java 17
-* Node.js (para o frontend)
-* Docker
-* Docker Compose
+### Autenticação
+
+- Cadastro de usuários
+- Login utilizando JWT
+- Criptografia de senhas com BCrypt
+- Proteção de rotas
+- Isolamento completo dos dados por usuário autenticado
+
+### Gestão de ativos
+
+- Cadastro de ativos financeiros
+- Consulta de ativos do usuário
+- Atualização e remoção de ativos
+- Histórico de preços
+- Cálculo de métricas do portfólio
+
+### Atualização de dados
+
+- Integração com a API CoinGecko
+- Atualização automática de preços
+- Comunicação em tempo real utilizando WebSocket
 
 ---
 
-## Stack
+## Arquitetura
+
+```
+┌──────────────┬────────────────┬──────────────────┐
+│ React + Vite  │    REST / JWT   │  Spring Boot API  │
+│  (Frontend)   │►─────────────►  Spring Security   │
+└──────────────┘                └───────┴──────────┘
+                                         │
+                          Spring Data JPA + Hibernate
+                                         │
+                                    PostgreSQL
+                                         │
+                                   CoinGecko API
+```
 
 | Camada | Tecnologia |
 |---|---|
@@ -47,46 +75,134 @@ finance-dashboard/
 
 ---
 
-### 3. Executar o backend
+## Tecnologias
+
+### Backend
+
+- Java 17
+- Spring Boot 3
+- Spring Security
+- Spring Data JPA
+- Spring Web
+- Spring WebFlux
+- Spring WebSocket
+- Flyway
+- Maven
+
+### Frontend
+
+- React 19
+- TypeScript
+- Vite
+- TanStack Router
+- React Query
+- Axios
+- Tailwind CSS
+- Recharts
+
+### Banco de Dados
+
+- PostgreSQL
+
+### DevOps
+
+- Docker
+- Docker Compose
+- GitHub Actions
+- Vercel
+- Render
+
+---
+
+## Estrutura do projeto
+
+```text
+finance-dashboard
+│
+├── backend
+│   ├── src
+│   ├── pom.xml
+│   └── Dockerfile
+│
+├── frontend
+│   ├── src
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── docker-compose.yml
+├── README.md
+└── .github
+    └── workflows
+```
+
+---
+
+## Executando o projeto
 
 ### Pré-requisitos
 
 - Java 17
-- Node 20
-- Docker + Docker Compose
+- Node.js 20+
+- Docker
+- Docker Compose
 
-### Opção 1 — Docker Compose (tudo de uma vez)
+---
+
+### Executando com Docker
 
 ```bash
 git clone https://github.com/FelipedBarbosa/Finance-Dashboard.git
-cd finance-dashboard
+
+cd Finance-Dashboard
 
 docker compose up --build
 ```
 
-As migrações Flyway são aplicadas automaticamente na inicialização.
+Após a inicialização:
 
-### 4. Executar o frontend
+| Serviço | Endereço |
+|----------|----------|
+| Frontend | http://localhost:5173 |
+| Backend | http://localhost:8080 |
+| PostgreSQL | localhost:5432 |
+
+As migrações do Flyway são executadas automaticamente durante a inicialização.
+
+---
+
+### Executando localmente
+
+#### Backend
+
+```bash
+cd backend
+
+./mvnw spring-boot:run
+```
+
+Windows
+
+```powershell
+mvnw.cmd spring-boot:run
+```
+
+#### Frontend
 
 ```bash
 cd frontend
+
 npm install
+
 npm run dev
 ```
 
-A interface estará disponível em:
-
-```text
-http://localhost:5173
-```
+---
 
 ## Autenticação
 
-A API utiliza autenticação stateless via JWT.
+### Registro
 
-### Registrar usuário
-
-```http
+```
 POST /auth/register
 ```
 
@@ -98,9 +214,11 @@ POST /auth/register
 }
 ```
 
+---
+
 ### Login
 
-```http
+```
 POST /auth/login
 ```
 
@@ -111,78 +229,34 @@ POST /auth/login
 }
 ```
 
-Resposta:
+Resposta
 
 ```json
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "accessToken": "...",
   "tokenType": "Bearer"
 }
 ```
 
-Todas as requisições aos endpoints de ativos devem incluir o header:
+As requisições para endpoints protegidos devem conter o cabeçalho:
 
-```text
+```
 Authorization: Bearer <accessToken>
 ```
 
-## Endpoints Principais
-
 ---
 
-### Opção 2 — Desenvolvimento local
-
-**Backend:**
-
-```bash
-cd backend
-./mvnw package -DskipTests
-java -jar target/finance-dashboard-0.0.1-SNAPSHOT.jar
-```
-
-### Listar ativos (do usuário autenticado)
-
-```bash
-cd frontend
-npm install --legacy-peer-deps
-npm run dev
-```
-
-Acesse: http://localhost:3000
-
----
-
-## Deploy
-
-### Frontend → Vercel
-
-1. Importe o repositório no [Vercel](https://vercel.com)
-2. Configure **Root Directory** como `frontend`
-3. Adicione as variáveis de ambiente:
-   ```
-   VITE_API_URL=https://seu-backend.onrender.com
-   VITE_WS_URL=wss://seu-backend.onrender.com/ws/prices
-   ```
-4. Deploy automático a cada push na `main`
-
-### Backend → Render
-
-1. Crie um novo **Web Service** no [Render](https://render.com)
-2. Selecione o repositório e configure **Root Directory** como `backend`
-3. Render detecta automaticamente o `Dockerfile`
-4. Adicione as variáveis de ambiente do PostgreSQL
-
-Executar os testes automatizados do backend:
-
-```bash
-./mvnw -f backend/pom.xml test
-```
+## Principais endpoints
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `GET` | `/assets` | Lista todos os ativos |
-| `POST` | `/assets` | Cadastra novo ativo |
-| `GET` | `/assets/{id}/metrics` | Métricas de um ativo |
+| `POST` | `/auth/register` | Cadastro de usuário |
+| `POST` | `/auth/login` | Autenticação |
+| `GET` | `/assets` | Lista ativos do usuário autenticado |
+| `POST` | `/assets` | Cadastra um ativo |
+| `PUT` | `/assets/{id}` | Atualiza um ativo |
+| `DELETE` | `/assets/{id}` | Remove um ativo |
+| `GET` | `/assets/{id}/metrics` | Consulta métricas do ativo |
 | `GET` | `/assets/chart/portfolio-last-30-days` | Histórico do portfólio |
 | `WS` | `/ws/prices` | Stream de preços em tempo real |
 | `GET` | `/actuator/health` | Status da aplicação (público) |
@@ -230,20 +304,54 @@ curl http://localhost:8080/actuator/prometheus | head -40
 
 ## Testes
 
+Backend
+
 ```bash
 cd backend
+
 ./mvnw test
 ```
 
-## Melhorias Futuras
+O pipeline de integração contínua executa automaticamente:
 
-* Refresh token automático no frontend
-* Deploy em cloud
-* Cache com Redis
-* Documentação com Swagger/OpenAPI
-* Integração com mais provedores financeiros
-* Testes end-to-end com Cypress
+- compilação do backend;
+- testes automatizados;
+- validação do frontend;
+- verificação de build a cada Push e Pull Request.
+
+---
+
+## Deploy
+
+### Frontend
+
+Hospedado na Vercel.
+
+Variáveis de ambiente:
+
+```env
+VITE_API_URL=https://seu-backend.onrender.com
+VITE_WS_URL=wss://seu-backend.onrender.com/ws/prices
+```
+
+### Backend
+
+Hospedado no Render utilizando Docker.
+
+---
+
+## Roadmap
+
+- Refresh Token
+- Dashboard analítico consolidado
+- Cache com Redis
+- Documentação OpenAPI/Swagger
+- Testes End-to-End com Cypress
+- ~~Observabilidade (Micrometer + Prometheus)~~ ✅ Concluído
+
+---
 
 ## Autor
 
-Desenvolvido por **Felipe Barbosa**
+**Felipe Barbosa**
+
