@@ -26,3 +26,16 @@ server:
         secure: true
         same-site: Lax
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: finance-dashboard

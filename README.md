@@ -39,6 +39,7 @@ finance-dashboard/
 | Frontend | React 19, TanStack Router, React Query, Recharts, Tailwind CSS 4 |
 | Backend | Spring Boot 3.3, Java 17, Spring Data JPA, WebSocket, WebFlux |
 | Banco | PostgreSQL 15 |
+| Observabilidade | Micrometer, Prometheus |
 | CI | GitHub Actions |
 | Deploy Frontend | Vercel |
 | Deploy Backend | Render / Railway |
@@ -184,10 +185,48 @@ Executar os testes automatizados do backend:
 | `GET` | `/assets/{id}/metrics` | Métricas de um ativo |
 | `GET` | `/assets/chart/portfolio-last-30-days` | Histórico do portfólio |
 | `WS` | `/ws/prices` | Stream de preços em tempo real |
-| `GET` | `/actuator/health` | Status da aplicação |
+| `GET` | `/actuator/health` | Status da aplicação (público) |
+| `GET` | `/actuator/prometheus` | Métricas no formato Prometheus |
+| `GET` | `/actuator/metrics` | Métricas em JSON |
 | `GET` | `/swagger-ui.html` | Documentação interativa |
 
 ---
+
+## Observabilidade
+
+O backend expõe métricas no formato [Prometheus](https://prometheus.io) via **Micrometer**.
+
+### Endpoint
+
+```
+GET http://localhost:8080/actuator/prometheus
+```
+
+### Métricas Disponíveis
+
+| Categoria | Exemplos |
+|---|---|
+| JVM | `jvm_memory_used_bytes`, `jvm_gc_pause_seconds` |
+| HTTP | `http_server_requests_seconds_count`, `http_server_requests_seconds_sum` |
+| Banco de dados | `hikaricp_connections_active`, `hikaricp_connections_idle` |
+| Sistema | `process_cpu_usage`, `system_cpu_usage` |
+
+### Verificação Local
+
+```bash
+# Suba o backend
+cd backend && ./mvnw spring-boot:run
+
+# Acesse o endpoint (nova aba do terminal)
+curl http://localhost:8080/actuator/prometheus | head -40
+```
+
+### Próximos Passos (Observabilidade)
+
+- [ ] Adicionar Prometheus + Grafana ao `docker-compose.yml`
+- [ ] Criar dashboard Grafana com métricas JVM e HTTP
+- [ ] Adicionar métricas de negócio customizadas (ex: total de ativos por usuário)
+- [ ] Configurar alertas de disponibilidade
 
 ## Testes
 
