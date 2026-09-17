@@ -111,6 +111,7 @@ O projeto segue uma estrutura full-stack, separando frontend e backend em módul
 - GitHub Actions
 - Vercel
 - Render
+- Prometheus
 
 ---
 
@@ -162,8 +163,11 @@ Após a inicialização:
 
 | Serviço | Endereço |
 |----------|----------|
-| Frontend | http://localhost:5173 |
+| Frontend | http://localhost:3000 |
 | Backend | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger-ui.html |
+| Actuator Health | http://localhost:8080/actuator/health |
+| Prometheus | http://localhost:9090 |
 | PostgreSQL | localhost:5432 |
 
 As migrações do Flyway são executadas automaticamente durante a inicialização.
