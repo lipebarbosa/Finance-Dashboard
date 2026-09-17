@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: finance-dashboard
+    env: docker
+    dockerfilePath: Dockerfile
+    healthCheckPath: /actuator/health
+    autoDeploy: true

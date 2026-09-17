@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://finance-db:5432/finance_db
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  # Flyway disabled during dev — use ddl-auto: update for fast iteration.
+  # Enable when schema stabilizes for staging/production.
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+
+jwt:
+  secret: "YTJmNzk4ZDEtZWI5Yi00MjFhLWE3ZDktNDc2YWVhMDE2YTk5LWZpbmFuY2UtZGFzaGJvYXJkLXNlY3VyZS1rZXktNjQtYnl0ZXM="
+  accessTokenExpirationMs: 3600000   # 1 hour
+  refreshTokenExpirationMs: 604800000 # 7 days
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: Lax
+

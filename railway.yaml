@@ -1,0 +1,15 @@
+services:
+  - type: docker
+    name: finance-dashboard
+    dockerfilePath: Dockerfile
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: prod
+    ports:
+      - 8080
+    healthCheck:
+      path: /actuator/health
+      interval: 10s
+      timeout: 5s
+      startPeriod: 30s
+      retries: 3
