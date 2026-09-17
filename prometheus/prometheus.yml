@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s       # Coleta métricas a cada 15 segundos
+  evaluation_interval: 15s   # Avalia regras a cada 15 segundos
+
+# -------------------------------------------------------
+# Scrape configs
+# Cada job define um conjunto de targets a ser monitorado
+# -------------------------------------------------------
+scrape_configs:
+
+  # Job: Finance Dashboard (Spring Boot + Micrometer)
+  - job_name: 'finance-dashboard'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s   # Coleta mais frequente para dados financeiros
+    static_configs:
+      - targets: ['app:8080']   # Nome do serviço no docker-compose
+        labels:
+          application: 'finance-dashboard'
+          environment: 'local'
+
+  # Job: auto-monitoramento do próprio Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          application: 'prometheus'

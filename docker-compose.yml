@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  finance-net:
+    driver: bridge
+
 services:
   postgres:
     image: postgres:15
@@ -17,6 +21,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - finance-net
 
   app:
     build: ./backend
@@ -33,6 +39,9 @@ services:
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_OPEN_IN_VIEW=false
+    networks:
+      - finance-net
 
   frontend:
     build:
@@ -46,6 +55,29 @@ services:
       - "3000:80"
     depends_on:
       - app
+    networks:
+      - finance-net
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: finance-prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    networks:
+      - finance-net
+    restart: unless-stopped
 
 volumes:
   postgres-data:
+  prometheus-data:
